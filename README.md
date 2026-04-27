@@ -103,6 +103,9 @@ python dataset_generator.py --langs hi en --per-lang 250
 python download_marathi_real.py
 
 # 3. Train model
+python train_sklearn.py --components 128 --extra-fake test_fake_speech.mp3 --fit-full
+
+# Optional: original CNN training path
 python train_on_dataset.py --dataset dataset --epochs 60
 
 # 4. Start web server

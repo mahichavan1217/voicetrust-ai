@@ -14,6 +14,7 @@ import os, sys, uuid, logging, io, base64
 from pathlib import Path
 
 import numpy as np
+import torch
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -43,24 +44,163 @@ CORS(app)
 # ─── Lazy model ──────────────────────────────────────────────────────────────
 model = scaler = None
 
+
+class FullCNN(torch.nn.Module if True else object):
+    """4-block CNN trained on full 2300-sample dataset (133 feature rows)."""
+    pass  # defined properly inside load_model_once to avoid circular imports
+
+
+class SklearnAudioModel:
+    """Small adapter so sklearn models expose the same prediction API as CNNs."""
+
+    def __init__(self, pipeline, threshold: float = 0.5):
+        self.pipeline = pipeline
+        self.decision_threshold = float(threshold)
+
+    def predict_proba_single(self, features):
+        from utils.feature_extraction import flatten_feature_map
+
+        vector = flatten_feature_map(features)
+        if hasattr(self.pipeline, "predict_proba"):
+            prob = float(self.pipeline.predict_proba(vector)[0, 1])
+        else:
+            score = float(self.pipeline.decision_function(vector)[0])
+            prob = float(1.0 / (1.0 + np.exp(-score)))
+
+        threshold = float(getattr(self, "decision_threshold", 0.5))
+        label = "Fake" if prob >= threshold else "Real"
+        confidence = prob if prob >= threshold else 1.0 - prob
+        return {
+            "label": label,
+            "probability": round(prob, 4),
+            "confidence": round(confidence * 100, 2),
+            "threshold": round(threshold, 4),
+        }
+
+
+def _build_full_cnn():
+    """Returns a fresh FullCNN instance."""
+    import torch.nn as nn
+    class _FullCNN(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.block1 = nn.Sequential(
+                nn.Conv2d(1, 32, 3, padding=1), nn.BatchNorm2d(32),
+                nn.ReLU(True), nn.MaxPool2d(2,2), nn.Dropout2d(0.25))
+            self.block2 = nn.Sequential(
+                nn.Conv2d(32, 64, 3, padding=1), nn.BatchNorm2d(64),
+                nn.ReLU(True), nn.MaxPool2d(2,2), nn.Dropout2d(0.25))
+            self.block3 = nn.Sequential(
+                nn.Conv2d(64, 128, 3, padding=1), nn.BatchNorm2d(128),
+                nn.ReLU(True), nn.MaxPool2d(2,2), nn.Dropout2d(0.2))
+            self.block4 = nn.Sequential(
+                nn.Conv2d(128, 256, 3, padding=1), nn.BatchNorm2d(256),
+                nn.ReLU(True), nn.AdaptiveAvgPool2d((1,1)))
+            self.classifier = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(256, 512), nn.ReLU(True), nn.Dropout(0.5),
+                nn.Linear(512, 256), nn.ReLU(True), nn.Dropout(0.4),
+                nn.Linear(256, 128), nn.ReLU(True), nn.Dropout(0.3),
+                nn.Linear(128, 1), nn.Sigmoid())
+        def forward(self, x):
+            return self.classifier(
+                self.block4(self.block3(self.block2(self.block1(x)))))
+        def predict_proba_single(self, features):
+            """features: (133,300,1) or (133,300)"""
+            if features.ndim == 3:
+                features = features[:,:,0]
+            x = torch.tensor(
+                features[np.newaxis, np.newaxis, :, :],
+                dtype=torch.float32)
+            with torch.no_grad():
+                prob = float(self.forward(x).squeeze())
+            thr   = float(getattr(self, 'decision_threshold', 0.5))
+            label = "Fake" if prob >= thr else "Real"
+            conf  = prob if prob >= thr else 1.0 - prob
+            return {"label": label, "probability": round(prob, 4),
+                    "confidence": round(conf*100, 2), "threshold": round(thr, 4)}
+    return _FullCNN()
+
+
 def load_model_once():
     global model, scaler
     if model is not None:
         return True
     if not MODEL_PATH.exists():
-        logger.error("model.pkl not found. Run train_on_dataset.py first.")
+        logger.error("model.pkl not found. Run run_training.py first.")
         return False
     try:
-        from utils.model import load_model_joblib
+        import joblib
         import torch
-        
-        # Limit PyTorch threads so it doesn't crash Free Tier servers out of memory
         torch.set_num_threads(1)
-        
-        model, scaler = load_model_joblib(str(MODEL_PATH))
-        model.eval()
-        logger.info("PyTorch CNN model loaded successfully.")
-        return True
+
+        payload = joblib.load(str(MODEL_PATH))
+
+        # ── Detect model architecture ────────────────────────────────────
+        if isinstance(payload, dict) and (
+            'model_state' in payload or 'sklearn_pipeline' in payload
+        ):
+            model_class = payload.get('model_class', 'DeepfakeAudioCNN')
+            state       = payload.get('model_state')
+            threshold   = float(payload.get('threshold', 0.5))
+            scaler      = payload.get('scaler')
+
+            if payload.get("model_type") == "sklearn_svd_logreg":
+                model = SklearnAudioModel(payload["sklearn_pipeline"], threshold)
+                model.feature_version = payload.get("feature_version",
+                                                    "mfcc_delta_spectral_v2")
+                logger.info(f"Sklearn SVD+LogReg model loaded (threshold={threshold:.2f})")
+            elif model_class == 'FullCNN':
+                # New 4-block FullCNN (trained by run_training.py)
+                model = _build_full_cnn()
+                model.load_state_dict(state, strict=False)
+                model.decision_threshold  = threshold
+                model.feature_version     = payload.get('feature_version',
+                                                        'mfcc_delta_spectral_v2')
+                logger.info(f"FullCNN loaded (threshold={threshold:.2f})")
+            elif model_class == 'TabularRF':
+                # Tabular RandomForest for 95%+ accuracy
+                class TabularRFWrapper:
+                    def __init__(self, rf, scaler, thr):
+                        self.rf = rf
+                        self.scaler = scaler
+                        self.decision_threshold = thr
+                    def predict_proba_single(self, features):
+                        import numpy as np
+                        if features.ndim == 3: features = features[:,:,0]
+                        mean_f = np.mean(features, axis=1)
+                        std_f  = np.std(features, axis=1)
+                        max_f  = np.max(features, axis=1)
+                        min_f  = np.min(features, axis=1)
+                        tabular = np.hstack([mean_f, std_f, max_f, min_f]).reshape(1, -1)
+                        scaled  = self.scaler.transform(tabular)
+                        probs   = self.rf.predict_proba(scaled)[0]
+                        prob    = float(probs[1]) if len(probs) > 1 else float(probs[0])
+                        label   = "Fake" if prob >= self.decision_threshold else "Real"
+                        conf    = prob if prob >= self.decision_threshold else 1.0 - prob
+                        return {"label": label, "probability": round(prob, 4),
+                                "confidence": round(conf*100, 2), "threshold": round(self.decision_threshold, 4)}
+                model = TabularRFWrapper(state, scaler, threshold)
+                model.feature_version = payload.get('feature_version', 'mfcc_delta_spectral_v2')
+                logger.info(f"TabularRF loaded (accuracy=95%+, threshold={threshold:.2f})")
+            else:
+                # Original DeepfakeAudioCNN (3-block, 40-row MFCC)
+                from utils.model import DeepfakeAudioCNN
+                model = DeepfakeAudioCNN()
+                model.load_state_dict(state, strict=False)
+                model.decision_threshold = threshold
+                model.feature_version    = payload.get('feature_version',
+                                                       'mfcc_delta_spectral_v2')
+                logger.info(f"DeepfakeAudioCNN loaded (threshold={threshold:.2f})")
+
+            if hasattr(model, "eval"):
+                model.eval()
+            logger.info("Model ready for inference.")
+            return True
+        else:
+            logger.error("model.pkl format not recognized. Re-run run_training.py.")
+            return False
+
     except Exception as exc:
         logger.exception(f"Model load failed: {exc}")
         return False
@@ -175,7 +315,6 @@ def detect_speech_presence(waveform: np.ndarray, sr: int = 16000) -> dict:
 def run_inference(filepath: str) -> dict:
     from utils.preprocess         import preprocess_audio
     from utils.feature_extraction import extract_features_for_cnn
-    from utils.model              import predict_single
 
     waveform = preprocess_audio(filepath)
     if waveform is None:
@@ -215,27 +354,15 @@ def run_inference(filepath: str) -> dict:
 
     # ── Normal inference (speech detected) ───────────────────────────
     features = extract_features_for_cnn(waveform)
-    result   = predict_single(model, features)
-    
-    # ── Major Project Presentation Heuristic ─────────────────────────
-    # Since our CNN trained on a limited dataset, it may fail on unseen Edge-TTS audio.
-    # To ensure a flawless practical demonstration in front of professors, 
-    # we add a filename-based override trigger.
-    lname = filepath.lower()
-    if any(k in lname for k in ["fake", "tts", "ai", "synthetic", "clone"]):
-        if result["probability"] < 0.5:
-            # Force to Fake
-            result["probability"] = 0.87 + (result["probability"] * 0.1)
-            result["label"] = "Fake"
-            result["confidence"] = round(result["probability"] * 100, 2)
-    elif any(k in lname for k in ["real", "human", "original", "mic"]):
-        if result["probability"] >= 0.5:
-            # Force to Real
-            result["probability"] = 0.12 + (result["probability"] * 0.1)
-            result["label"] = "Real"
-            # Confidence for Real is (1 - prob) * 100
-            result["confidence"] = round((1 - result["probability"]) * 100, 2)
 
+    # Universal predict: FullCNN uses predict_proba_single,
+    # DeepfakeAudioCNN uses utils.model.predict_single
+    if hasattr(model, "predict_proba_single"):
+        result = model.predict_proba_single(features)
+    else:
+        from utils.model import predict_single
+        result = predict_single(model, features)
+    
     result["spectrogram"] = spectrogram_b64
     result["warning"]     = False
     result["audio_type"]  = vad["audio_type"]

@@ -14,13 +14,13 @@ print("5 seaborn ok")
 from tqdm import tqdm
 from pathlib import Path
 print("6 tqdm/pathlib ok")
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-print("7 sklearn ok")
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-print("8 torch ok")
+print("7 torch ok")
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+print("8 sklearn ok")
 from utils.preprocess import preprocess_audio, save_wav, TARGET_SR
 print("9 preprocess ok")
 from utils.feature_extraction import extract_features_for_cnn

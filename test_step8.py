@@ -14,8 +14,8 @@ print("5 seaborn ok")
 from tqdm import tqdm
 from pathlib import Path
 print("6 tqdm/pathlib ok")
-from sklearn.model_selection import train_test_split
-print("7 sklearn ok")
 import torch
-print("8 torch ok")
+print("7 torch ok")
+from sklearn.model_selection import train_test_split
+print("8 sklearn ok")
 print("PASSED first 8")

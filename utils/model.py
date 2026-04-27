@@ -99,13 +99,17 @@ def build_cnn_model(learning_rate: float = 1e-3):
 
 def save_model_joblib(model: DeepfakeAudioCNN,
                       scaler,
-                      path: str = "model.pkl") -> None:
+                      path: str = "model.pkl",
+                      threshold: float = 0.5,
+                      feature_version: str | None = None) -> None:
     """
     Save CNN state-dict + sklearn scaler to a single joblib file.
     """
     payload = {
         "model_state": model.cpu().state_dict(),
         "scaler":      scaler,
+        "threshold":   float(threshold),
+        "feature_version": feature_version,
     }
     joblib.dump(payload, path)
     model.to(DEVICE)
@@ -127,6 +131,8 @@ def load_model_joblib(path: str = "model.pkl"):
     model.to(DEVICE)
     model.eval()
     scaler  = payload.get("scaler")
+    model.decision_threshold = float(payload.get("threshold", 0.5))
+    model.feature_version = payload.get("feature_version")
     print(f"[INFO] Model loaded <- {path}")
     return model, scaler
 
@@ -135,7 +141,7 @@ def load_model_joblib(path: str = "model.pkl"):
 
 def predict_single(model: DeepfakeAudioCNN,
                    features: np.ndarray,
-                   threshold: float = 0.5) -> dict:
+                   threshold: float | None = None) -> dict:
     """
     Run inference on a single MFCC feature array.
 
@@ -149,6 +155,8 @@ def predict_single(model: DeepfakeAudioCNN,
     dict: {label, probability, confidence}
     """
     model.eval()
+    if threshold is None:
+        threshold = float(getattr(model, "decision_threshold", 0.5))
     feat = features
     # Accept (H, W, 1) or (H, W) → convert to (1, 1, H, W)
     if feat.ndim == 3:
@@ -163,4 +171,5 @@ def predict_single(model: DeepfakeAudioCNN,
         "label":       label,
         "probability": round(prob, 4),
         "confidence":  round(conf * 100, 2),
+        "threshold":   round(float(threshold), 4),
     }

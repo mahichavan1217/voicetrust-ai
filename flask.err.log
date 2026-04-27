@@ -1,27 +1,83 @@
-20:29:14 [INFO] PyTorch CNN model loaded successfully.
-20:29:14 [INFO] Starting Flask server on http://0.0.0.0:5000
-20:29:14 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+00:51:58 [INFO] PyTorch CNN model loaded successfully.
+00:51:58 [INFO] Starting Flask server on http://0.0.0.0:5000
+00:51:58 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://172.20.10.2:5000
-20:29:14 [INFO] [33mPress CTRL+C to quit[0m
-20:29:16 [INFO] Received: 5b9cb826_test_fake_speech.mp3
+00:51:58 [INFO] [33mPress CTRL+C to quit[0m
+00:52:01 [INFO] 127.0.0.1 - - [28/Apr/2026 00:52:01] "GET /health HTTP/1.1" 200 -
+00:52:08 [INFO] 127.0.0.1 - - [28/Apr/2026 00:52:08] "GET /health HTTP/1.1" 200 -
+00:53:52 [INFO] 127.0.0.1 - - [28/Apr/2026 00:53:52] "GET / HTTP/1.1" 200 -
+00:53:59 [INFO] Received: d8732286_real_mr_00003.wav
 C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\librosa\core\intervals.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import resource_filename
-20:29:17 [INFO] VAD: type=speech speech_ratio=0.851 zcr=0.0881 rolloff=2549.6Hz
-20:29:17 [INFO] Prediction -> Fake (74.27%)
-20:29:17 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:17] "POST /predict HTTP/1.1" 200 -
-20:29:17 [INFO] Received: acf787ef_real_en_00001.wav
-20:29:17 [INFO] VAD: type=speech speech_ratio=0.798 zcr=0.1727 rolloff=4540.2Hz
-20:29:17 [INFO] Prediction -> Fake (53.89%)
-20:29:17 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:17] "POST /predict HTTP/1.1" 200 -
-20:29:17 [INFO] Received: 0c8dafbd_fake_en_00001.wav
-20:29:17 [INFO] VAD: type=speech speech_ratio=0.872 zcr=0.1501 rolloff=3734.5Hz
-20:29:18 [INFO] Prediction -> Fake (86.0%)
-20:29:18 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:18] "POST /predict HTTP/1.1" 200 -
-20:29:18 [INFO] Received: 987e072e_fake_hi_00001.wav
-20:29:18 [INFO] VAD: type=sound_effect_or_music speech_ratio=0.628 zcr=0.2796 rolloff=4835.5Hz
-20:29:18 [INFO] Prediction -> Non-Speech (0.0%)
-20:29:18 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:18] "POST /predict HTTP/1.1" 200 -
-20:30:45 [INFO] 127.0.0.1 - - [27/Apr/2026 20:30:45] "GET / HTTP/1.1" 200 -
-20:30:46 [INFO] 127.0.0.1 - - [27/Apr/2026 20:30:46] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+00:54:01 [INFO] VAD: type=speech speech_ratio=0.553 zcr=0.3253 rolloff=4894.4Hz
+00:54:02 [INFO] Prediction -> Real (28.31%)
+00:54:02 [INFO] 127.0.0.1 - - [28/Apr/2026 00:54:02] "POST /predict HTTP/1.1" 200 -
+00:54:09 [INFO] Received: 24968474_fake_mr_00016.wav
+00:54:09 [INFO] VAD: type=speech speech_ratio=0.936 zcr=0.1346 rolloff=3807.8Hz
+00:54:09 [INFO] Prediction -> Fake (82.29%)
+00:54:09 [INFO] 127.0.0.1 - - [28/Apr/2026 00:54:09] "POST /predict HTTP/1.1" 200 -
+00:54:17 [INFO] Received: a73b8469_edgefake_hi_00005.wav
+00:54:17 [INFO] VAD: type=speech speech_ratio=0.755 zcr=0.2488 rolloff=4439.7Hz
+00:54:17 [INFO] Prediction -> Real (38.26%)
+00:54:17 [INFO] 127.0.0.1 - - [28/Apr/2026 00:54:17] "POST /predict HTTP/1.1" 200 -
+01:29:14 [INFO] 127.0.0.1 - - [28/Apr/2026 01:29:14] "GET / HTTP/1.1" 200 -
+01:39:49 [INFO] 127.0.0.1 - - [28/Apr/2026 01:39:49] "GET / HTTP/1.1" 200 -
+01:41:06 [INFO] 127.0.0.1 - - [28/Apr/2026 01:41:06] "GET / HTTP/1.1" 200 -
+01:41:12 [INFO] Received: bbac0be7_edgefake_hi_00001.wav
+01:41:12 [INFO] VAD: type=speech speech_ratio=0.596 zcr=0.2925 rolloff=4665.6Hz
+01:41:14 [INFO] Prediction -> Real (65.68%)
+01:41:14 [INFO] 127.0.0.1 - - [28/Apr/2026 01:41:14] "POST /predict HTTP/1.1" 200 -
+01:51:18 [INFO] 127.0.0.1 - - [28/Apr/2026 01:51:18] "GET / HTTP/1.1" 200 -
+01:51:19 [INFO] 127.0.0.1 - - [28/Apr/2026 01:51:19] "GET / HTTP/1.1" 200 -
+01:51:20 [INFO] 127.0.0.1 - - [28/Apr/2026 01:51:20] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+01:51:26 [INFO] Received: 99388f9c_edgefake_hi_00001.wav
+01:51:26 [INFO] VAD: type=speech speech_ratio=0.596 zcr=0.2925 rolloff=4665.6Hz
+01:51:27 [INFO] Prediction -> Real (65.68%)
+01:51:27 [INFO] 127.0.0.1 - - [28/Apr/2026 01:51:27] "POST /predict HTTP/1.1" 200 -
+01:56:21 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:21] "GET / HTTP/1.1" 200 -
+01:56:27 [INFO] Received: a4cbeed2_edgefake_hi_00003.wav
+01:56:27 [INFO] VAD: type=speech speech_ratio=0.553 zcr=0.2979 rolloff=4914.5Hz
+01:56:27 [INFO] Prediction -> Real (71.36%)
+01:56:27 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:27] "POST /predict HTTP/1.1" 200 -
+01:56:33 [INFO] Received: 1c72f02d_fake_mr_00007.wav
+01:56:33 [INFO] VAD: type=speech speech_ratio=0.904 zcr=0.1805 rolloff=4492.0Hz
+01:56:33 [INFO] Prediction -> Fake (80.94%)
+01:56:33 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:33] "POST /predict HTTP/1.1" 200 -
+01:56:40 [INFO] Received: 42607bdf_real_hi_00001.wav
+01:56:40 [INFO] VAD: type=speech speech_ratio=0.915 zcr=0.0924 rolloff=3442.1Hz
+01:56:40 [INFO] Prediction -> Real (85.72%)
+01:56:40 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:40] "POST /predict HTTP/1.1" 200 -
+01:56:46 [INFO] Received: 4803ea34_fake_mr_00016.wav
+01:56:46 [INFO] VAD: type=speech speech_ratio=0.936 zcr=0.1346 rolloff=3807.8Hz
+01:56:47 [INFO] Prediction -> Fake (82.29%)
+01:56:47 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:47] "POST /predict HTTP/1.1" 200 -
+01:56:55 [INFO] Received: 7e0b4226_real_hi_00011.wav
+01:56:55 [INFO] VAD: type=speech speech_ratio=0.84 zcr=0.1556 rolloff=3721.3Hz
+01:56:55 [INFO] Prediction -> Real (41.57%)
+01:56:55 [INFO] 127.0.0.1 - - [28/Apr/2026 01:56:55] "POST /predict HTTP/1.1" 200 -
+01:57:02 [INFO] Received: bcd9d002_real_mr_00003.wav
+01:57:02 [INFO] VAD: type=speech speech_ratio=0.553 zcr=0.3253 rolloff=4894.4Hz
+01:57:02 [INFO] Prediction -> Real (28.31%)
+01:57:02 [INFO] 127.0.0.1 - - [28/Apr/2026 01:57:02] "POST /predict HTTP/1.1" 200 -
+01:58:29 [INFO] 172.20.10.2 - - [28/Apr/2026 01:58:29] "GET / HTTP/1.1" 200 -
+01:58:30 [INFO] 172.20.10.2 - - [28/Apr/2026 01:58:30] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+01:58:36 [INFO] Received: 2b5b51d6_test_fake_speech.mp3
+01:58:36 [INFO] VAD: type=speech speech_ratio=0.883 zcr=0.0881 rolloff=2549.6Hz
+01:58:36 [INFO] Prediction -> Fake (86.47%)
+01:58:36 [INFO] 172.20.10.2 - - [28/Apr/2026 01:58:36] "POST /predict HTTP/1.1" 200 -
+01:58:43 [INFO] Received: d00682cc_edgefake_hi_00001.wav
+01:58:43 [INFO] VAD: type=speech speech_ratio=0.596 zcr=0.2925 rolloff=4665.6Hz
+01:58:44 [INFO] Prediction -> Real (65.68%)
+01:58:44 [INFO] 172.20.10.2 - - [28/Apr/2026 01:58:44] "POST /predict HTTP/1.1" 200 -
+01:59:31 [INFO] Received: d1462693_edgefake_hi_00001.wav
+01:59:31 [INFO] VAD: type=speech speech_ratio=0.596 zcr=0.2925 rolloff=4665.6Hz
+01:59:31 [INFO] Prediction -> Real (65.68%)
+01:59:31 [INFO] 172.20.10.2 - - [28/Apr/2026 01:59:31] "POST /predict HTTP/1.1" 200 -
+02:02:53 [INFO] 127.0.0.1 - - [28/Apr/2026 02:02:53] "GET / HTTP/1.1" 200 -
+02:02:54 [INFO] 127.0.0.1 - - [28/Apr/2026 02:02:54] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+02:02:59 [INFO] Received: 069fa1cf_edgefake_hi_00001.wav
+02:02:59 [INFO] VAD: type=speech speech_ratio=0.596 zcr=0.2925 rolloff=4665.6Hz
+02:03:00 [INFO] Prediction -> Real (65.68%)
+02:03:00 [INFO] 127.0.0.1 - - [28/Apr/2026 02:03:00] "POST /predict HTTP/1.1" 200 -

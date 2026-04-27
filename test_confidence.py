@@ -4,7 +4,7 @@ tests = [
     ("dataset/fake/english/fake_en_00001.wav", "Fake EN gTTS"),
     ("dataset/fake/hindi/fake_hi_00001.wav",   "Fake HI gTTS"),
     ("dataset/real/english/real_en_00001.wav", "Real EN"),
-    ("dataset/real/hindi/real_en_00001.wav",   "Real HI"),
+    ("dataset/real/hindi/real_hi_00001.wav",   "Real HI"),
     ("test_fake_speech.mp3",                   "TTS test file"),
 ]
 
