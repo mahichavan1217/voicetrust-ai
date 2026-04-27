@@ -1,0 +1,27 @@
+20:29:14 [INFO] PyTorch CNN model loaded successfully.
+20:29:14 [INFO] Starting Flask server on http://0.0.0.0:5000
+20:29:14 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+20:29:14 [INFO] [33mPress CTRL+C to quit[0m
+20:29:16 [INFO] Received: 5b9cb826_test_fake_speech.mp3
+C:\Users\HP\AppData\Local\Programs\Python\Python311\Lib\site-packages\librosa\core\intervals.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import resource_filename
+20:29:17 [INFO] VAD: type=speech speech_ratio=0.851 zcr=0.0881 rolloff=2549.6Hz
+20:29:17 [INFO] Prediction -> Fake (74.27%)
+20:29:17 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:17] "POST /predict HTTP/1.1" 200 -
+20:29:17 [INFO] Received: acf787ef_real_en_00001.wav
+20:29:17 [INFO] VAD: type=speech speech_ratio=0.798 zcr=0.1727 rolloff=4540.2Hz
+20:29:17 [INFO] Prediction -> Fake (53.89%)
+20:29:17 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:17] "POST /predict HTTP/1.1" 200 -
+20:29:17 [INFO] Received: 0c8dafbd_fake_en_00001.wav
+20:29:17 [INFO] VAD: type=speech speech_ratio=0.872 zcr=0.1501 rolloff=3734.5Hz
+20:29:18 [INFO] Prediction -> Fake (86.0%)
+20:29:18 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:18] "POST /predict HTTP/1.1" 200 -
+20:29:18 [INFO] Received: 987e072e_fake_hi_00001.wav
+20:29:18 [INFO] VAD: type=sound_effect_or_music speech_ratio=0.628 zcr=0.2796 rolloff=4835.5Hz
+20:29:18 [INFO] Prediction -> Non-Speech (0.0%)
+20:29:18 [INFO] 127.0.0.1 - - [27/Apr/2026 20:29:18] "POST /predict HTTP/1.1" 200 -
+20:30:45 [INFO] 127.0.0.1 - - [27/Apr/2026 20:30:45] "GET / HTTP/1.1" 200 -
+20:30:46 [INFO] 127.0.0.1 - - [27/Apr/2026 20:30:46] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

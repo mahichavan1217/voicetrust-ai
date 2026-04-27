@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+.env
+
+# Datasets and heavy files (avoid pushing large data)
+dataset/
+dataset_cache/
+data/
+uploads/
+plots/
+
+# Large binaries (except our tiny 0.6MB model which we do want to push)
+*.npy
+*.mp3
+*.wav
+
+# Any macOS specific
+.DS_Store

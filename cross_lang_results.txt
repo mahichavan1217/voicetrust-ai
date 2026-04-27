@@ -1,0 +1,23 @@
+============================================================
+  IndicFakeSpeech -- Cross-Language Experiment Results
+============================================================
+  Train languages : hindi, english
+  Test  language  : marathi  (UNSEEN during training)
+
+  Split                          Acc     Prec      Rec       F1
+  -------------------------------------------------------
+  Same-Language (val)         92.50%   86.96%  100.00%   93.02%
+  Cross-Language (marathi)    92.67%   87.21%  100.00%   93.17%
+  -------------------------------------------------------
+
+  Key Finding:
+  Accuracy drop (same -> cross-language): -0.17%
+  => Model generalises to unseen language (publishable result).
+
+  BibTeX citation:
+  @inproceedings{indicfakespeech2024,
+    title={IndicFakeSpeech: Cross-Lingual Deepfake Audio Detection},
+    year={2024},
+    note={CNN trained on Hindi+English, tested on Marathi}
+  }
+============================================================

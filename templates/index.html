@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceTrust AI | Deepfake Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #07090f;
+      --bg-panel: #0d121c;
+      --bg-card: #131926;
+      --border-c: rgba(6, 182, 212, 0.15);
+      --border-l: rgba(255, 255, 255, 0.05);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.35);
+      --green: #10b981;
+      --red: #ef4444;
+      --orange: #f59e0b;
+      --txt: #f8fafc;
+      --muted: #64748b;
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--txt);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      width: 100%;
+      height: 100%;
+      max-width: 1600px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-c);
+      border-radius: var(--r-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, .5), inset 0 0 20px rgba(6, 182, 212, .04);
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .9rem 1.4rem;
+      border-bottom: 1px solid var(--border-c);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 14px var(--cyan-glow);
+      color: var(--cyan);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .brand-title span {
+      color: var(--green);
+    }
+
+    .brand-sub {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    .divider {
+      width: 1px;
+      height: 38px;
+      background: var(--border-l);
+      margin: 0 1.2rem;
+    }
+
+    .head-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      max-width: 280px;
+      line-height: 1.4;
+    }
+
+    .team-pill {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      padding: .45rem 1.1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-l);
+      border-radius: 40px;
+      font-size: .78rem;
+    }
+
+    .team-pill i {
+      color: var(--cyan);
+    }
+
+    .dev-lbl {
+      font-size: .6rem;
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .devs {
+      color: var(--txt);
+      font-weight: 500;
+    }
+
+    .devs span {
+      color: var(--cyan);
+      margin: 0 .35rem;
+    }
+
+    /* ── Body ── */
+    .body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      width: 220px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border-c);
+      background: rgba(13, 18, 28, .4);
+      display: flex;
+      flex-direction: column;
+      padding: 1.2rem .9rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    nav li {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      padding: .75rem 1.1rem;
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+
+    nav li:hover {
+      color: var(--txt);
+      background: rgba(255, 255, 255, .03);
+    }
+
+    nav li.active {
+      background: linear-gradient(90deg, rgba(6, 182, 212, .15), transparent);
+      color: var(--cyan);
+      border-left-color: var(--cyan);
+    }
+
+    .quote {
+      margin-top: auto;
+      padding: .9rem;
+      font-size: .78rem;
+      color: var(--muted);
+      font-style: italic;
+      border-left: 2px solid var(--border-l);
+      margin-bottom: 1.2rem;
+    }
+
+    .sbar-wave {
+      height: 60px;
+    }
+
+    .sbar-wave svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Content ── */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Views ── */
+    .view {
+      display: none;
+      flex-direction: column;
+      gap: .9rem;
+      flex: 1;
+      animation: fin .2s ease;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    @keyframes fin {
+      from {
+        opacity: 0;
+        transform: translateY(5px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ── Cards ── */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-l);
+      border-radius: var(--r-md);
+      padding: 1.1rem;
+    }
+
+    .ptitle {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: .9rem;
+    }
+
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 370px;
+      gap: .9rem;
+    }
+
+    .g4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+    }
+
+    .g2r {
+      display: grid;
+      grid-template-columns: 1fr 370px;
+      gap: .9rem;
+    }
+
+    /* ── Top feature cards ── */
+    .feat {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-l);
+      padding: .9rem;
+      border-radius: var(--r-md);
+      transition: border-color .2s;
+    }
+
+    .feat:hover {
+      border-color: rgba(6, 182, 212, .3);
+    }
+
+    .ficon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px dashed var(--cyan);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .ftext h4 {
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    .ftext p {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    /* ── Upload zone ── */
+    .dropzone {
+      border: 1px dashed var(--cyan);
+      border-radius: var(--r-sm);
+      padding: 2rem 1rem;
+      text-align: center;
+      background: rgba(6, 182, 212, .02);
+      transition: all .3s;
+      cursor: pointer;
+    }
+
+    .dropzone.over {
+      background: rgba(6, 182, 212, .08);
+      border-style: solid;
+    }
+
+    .dropzone i {
+      width: 44px;
+      height: 44px;
+      color: var(--txt);
+      margin-bottom: .9rem;
+    }
+
+    .dropzone p {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-bottom: .9rem;
+    }
+
+    .dropzone .hint {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: 1.2rem;
+    }
+
+    .btn-browse {
+      background: transparent;
+      border: 1px solid var(--txt);
+      color: var(--txt);
+      padding: .45rem 1.6rem;
+      border-radius: 4px;
+      font-size: .83rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-browse:hover {
+      background: rgba(255, 255, 255, .05);
+    }
+
+    /* ── Player ── */
+    .player-wrap {
+      display: none;
+      flex-direction: column;
+      gap: .45rem;
+      background: rgba(0, 0, 0, .2);
+      padding: .75rem 1rem;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border-l);
+      margin-top: .9rem;
+    }
+
+    .player-wrap.on {
+      display: flex;
+    }
+
+    .fname {
+      font-size: .68rem;
+      color: var(--cyan);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .play-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--cyan);
+      background: transparent;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s;
+    }
+
+    .play-btn:hover {
+      background: rgba(6, 182, 212, .1);
+    }
+
+    .wave-wrap {
+      flex: 1;
+      height: 38px;
+      overflow: hidden;
+      border-radius: 3px;
+    }
+
+    #waveCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .ptime {
+      font-size: .68rem;
+      color: var(--muted);
+      white-space: nowrap;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    #audioEl {
+      display: none;
+    }
+
+    /* ── Analyse btn ── */
+    .btn-analyze {
+      width: 100%;
+      margin-top: .9rem;
+      padding: .9rem;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      border: none;
+      border-radius: var(--r-sm);
+      color: #fff;
+      font-weight: 700;
+      font-size: .95rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: .5rem;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, .3);
+      transition: opacity .2s;
+    }
+
+    .btn-analyze:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: #334155;
+    }
+
+    .btn-analyze:hover:not(:disabled) {
+      opacity: .88;
+    }
+
+    /* ── Gauge ── */
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 1.3rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .gauge-wrap {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      flex-shrink: 0;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, .05);
+      stroke-width: 6;
+    }
+
+    .gauge-prog {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 251.2;
+      transition: stroke-dashoffset 1s ease, stroke .3s;
+      filter: drop-shadow(0 0 5px currentColor);
+    }
+
+    .gauge-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(6, 182, 212, .08) 0%, rgba(13, 18, 28, .95) 70%);
+      border: 1px solid rgba(6, 182, 212, .2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 18px rgba(6, 182, 212, .08), 0 0 16px rgba(6, 182, 212, .1);
+      transition: all .3s;
+    }
+
+    .gauge-inner i {
+      color: var(--cyan);
+      width: 34px;
+      height: 34px;
+      transition: color .3s;
+    }
+
+    .vdetails {}
+
+    .vtitle {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--cyan);
+      transition: color .3s;
+    }
+
+    .vclabel {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .7rem;
+    }
+
+    .vscore {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1;
+      transition: color .3s;
+    }
+
+    .vdesc {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .45rem;
+      line-height: 1.4;
+    }
+
+    .vdesc .hi {
+      font-weight: 500;
+    }
+
+    /* ── Metrics ── */
+    .mbox {
+      background: rgba(0, 0, 0, .2);
+      border: 1px solid var(--border-l);
+      border-radius: var(--r-sm);
+      padding: .9rem .5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .45rem;
+    }
+
+    .mbox i {
+      width: 18px;
+      height: 18px;
+      color: var(--cyan);
+    }
+
+    .mlbl {
+      font-size: .62rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+
+    .mval {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ── Right stack ── */
+    .rstack {
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+    }
+
+    .lang-row {
+      display: flex;
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
+    .lchip {
+      flex: 1;
+      border: 1px solid rgba(16, 185, 129, .25);
+      border-radius: var(--r-sm);
+      padding: .75rem .5rem;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      background: rgba(16, 185, 129, .03);
+    }
+
+    .licon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, .12);
+      color: var(--green);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: .95rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(16, 185, 129, .25);
+    }
+
+    .ltxt h5 {
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .ltxt p {
+      font-size: .6rem;
+      color: var(--muted);
+    }
+
+    /* ── Perf chart ── */
+    .perf-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.3rem;
+      margin-top: .75rem;
+    }
+
+    .perf-chart {
+      flex: 1;
+      height: 65px;
+    }
+
+    .perf-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .perf-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .perf-right h6 {
+      font-size: .68rem;
+      color: var(--muted);
+    }
+
+    .perf-right .big {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--green);
+      font-family: 'Space Grotesk';
+    }
+
+    .perf-right .stat {
+      font-size: .65rem;
+      color: var(--muted);
+    }
+
+    .sdot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      box-shadow: 0 0 5px var(--green);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    /* ── Arch flow ── */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0;
+    }
+
+    .anode {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .4rem;
+      text-align: center;
+      width: 70px;
+    }
+
+    .abox {
+      width: 50px;
+      height: 50px;
+      border: 1px solid var(--border-l);
+      background: rgba(0, 0, 0, .3);
+      border-radius: var(--r-sm);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--muted);
+      transition: all .3s;
+    }
+
+    .anode.on .abox {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 10px rgba(6, 182, 212, .2);
+    }
+
+    .anode span {
+      font-size: .65rem;
+      font-weight: 600;
+      color: var(--txt);
+    }
+
+    .anode small {
+      font-size: .56rem;
+      color: var(--muted);
+    }
+
+    .aarr {
+      color: var(--cyan);
+      opacity: .5;
+      flex-shrink: 0;
+    }
+
+    .arch-lbl {
+      text-align: center;
+      color: var(--green);
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    /* ── Foot ── */
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: .7rem;
+      font-size: .72rem;
+      color: var(--muted);
+    }
+
+    .foot span {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .foot i {
+      width: 13px;
+      height: 13px;
+      color: var(--cyan);
+    }
+
+    /* ── Perf/arch full-view panels ── */
+    .stat-bar-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .35rem;
+    }
+
+    .stat-bar-row span {
+      font-size: .78rem;
+    }
+
+    .bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 3px;
+      margin-bottom: 1rem;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .75rem;
+      background: rgba(0, 0, 0, .2);
+      border-radius: 6px;
+      margin-bottom: .6rem;
+    }
+
+    .data-row .k {
+      font-size: .82rem;
+      color: var(--muted);
+    }
+
+    .data-row .v {
+      font-size: .88rem;
+      font-weight: 700;
+    }
+
+    /* ── Spinner ── */
+    .spin {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: rot 1s linear infinite;
+    }
+
+    @keyframes rot {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <div class="logo"><i data-lucide="activity"></i></div>
+        <div>
+          <h1 class="brand-title">VoiceTrust <span>AI</span></h1>
+          <p class="brand-sub">Deepfake Audio Detection System</p>
+        </div>
+        <div class="divider"></div>
+        <p class="head-desc">Advanced AI-Powered System for Detecting Real vs Fake Voices with Multi-Language Support
+        </p>
+      </div>
+      <div class="team-pill">
+        <i data-lucide="users"></i>
+        <div>
+          <div class="dev-lbl">DEVELOPED BY</div>
+          <div class="devs"> Mahendra Chavan<span>•</span> Abhishek Kadam <span>•</span>Sopan Shinde</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="body">
+
+      <!-- SIDEBAR -->
+      <aside>
+        <nav>
+          <ul id="navList">
+            <li class="active" data-view="dashboard" onclick="goTo(this)"><i data-lucide="home"></i> Dashboard</li>
+            <li data-view="audio" onclick="goTo(this)"><i data-lucide="mic"></i> Audio Analysis</li>
+            <li data-view="arch" onclick="goTo(this)"><i data-lucide="cpu"></i> Model Architecture</li>
+            <li data-view="perf" onclick="goTo(this)"><i data-lucide="bar-chart-2"></i> Performance</li>
+            <li data-view="history" onclick="goTo(this)"><i data-lucide="clock"></i> History</li>
+            <li data-view="settings" onclick="goTo(this)"><i data-lucide="settings"></i> Settings</li>
+            <li data-view="about" onclick="goTo(this)"><i data-lucide="info"></i> About Us</li>
+          </ul>
+        </nav>
+        <div class="quote">"Technology is best when it brings people together."</div>
+        <div class="sbar-wave">
+          <svg viewBox="0 0 200 55" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#06b6d4" stop-opacity=".3" />
+                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,40 L15,28 L28,46 L42,12 L57,36 L72,22 L87,46 L102,28 L118,44 L133,10 L148,34 L163,20 L178,42 L195,16 L200,28 L200,55 L0,55Z"
+              fill="url(#wg)" opacity=".5" />
+            <path
+              d="M0,40 L15,28 L28,46 L42,12 L57,36 L72,22 L87,46 L102,28 L118,44 L133,10 L148,34 L163,20 L178,42 L195,16 L200,28"
+              fill="none" stroke="#06b6d4" stroke-width="1.4" stroke-linejoin="round" />
+            <circle cx="200" cy="28" r="3" fill="#06b6d4" opacity=".8" />
+          </svg>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main>
+
+        <!-- ====== VIEW: DASHBOARD ====== -->
+        <div class="view active" id="view-dashboard">
+          <!-- Top 4 cards -->
+          <div class="g4">
+            <div class="feat">
+              <div class="ficon"><i data-lucide="activity"></i></div>
+              <div class="ftext">
+                <h4>MFCC</h4>
+                <p>Feature Extraction</p>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="ficon"><i data-lucide="cpu"></i></div>
+              <div class="ftext">
+                <h4>CNN</h4>
+                <p>Deep Learning</p>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="ficon"><i data-lucide="git-branch"></i></div>
+              <div class="ftext">
+                <h4>Bi-LSTM</h4>
+                <p>Sequential Learning</p>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="ficon"><i data-lucide="globe"></i></div>
+              <div class="ftext">
+                <h4>MULTILINGUAL</h4>
+                <p>Hindi • Marathi • English</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle: Audio + Result -->
+          <div class="g2">
+            <div class="panel">
+              <div class="ptitle">AUDIO ANALYSIS</div>
+              <div class="dropzone" id="dz" ondragover="doDragOver(event)" ondragleave="doDragLeave()"
+                ondrop="doDrop(event)">
+                <i data-lucide="upload-cloud"></i>
+                <p>Drag &amp; Drop Your Audio File Here<br><br>or</p>
+                <input type="file" id="fileIn" accept="audio/*" style="display:none" onchange="pickFile(this.files[0])">
+                <label for="fileIn" class="btn-browse">Browse File</label>
+                <p class="hint">Supports: .wav, .mp3 &nbsp;|&nbsp; Max Size: 50MB &nbsp;|&nbsp; Max Duration: 30s</p>
+              </div>
+              <div class="player-wrap" id="pw">
+                <div class="fname" id="fn">audio.wav</div>
+                <div class="player-row">
+                  <button class="play-btn" onclick="doPlay()"><i data-lucide="play" id="playIco"
+                      style="width:14px;height:14px"></i></button>
+                  <div class="wave-wrap"><canvas id="waveCanvas"></canvas></div>
+                  <span class="ptime" id="ptime">00:00 / 00:00</span>
+                  <i data-lucide="volume-2" style="width:15px;height:15px;color:var(--muted)"></i>
+                </div>
+              </div>
+              <audio id="audioEl"></audio>
+              <button class="btn-analyze" id="btnAnalyze" onclick="analyse()" disabled>
+                <i data-lucide="search"></i> ANALYZE AUDIO
+              </button>
+            </div>
+
+            <div class="panel">
+              <div class="ptitle">DETECTION RESULT</div>
+              <div class="result-row">
+                <div class="gauge-wrap">
+                  <svg class="gauge-svg" viewBox="0 0 100 100">
+                    <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                    <circle class="gauge-prog" id="gRing" cx="50" cy="50" r="40"></circle>
+                  </svg>
+                  <div class="gauge-inner" id="gInner"><i id="gIcon" data-lucide="mic"
+                      style="width:34px;height:34px"></i></div>
+                </div>
+                <div class="vdetails">
+                  <div class="vtitle" id="vTitle">AWAITING...</div>
+                  <div class="vclabel">Confidence Score</div>
+                  <div class="vscore" id="vScore">--%</div>
+                  <div class="vdesc" id="vDesc">Upload an audio clip to verify authenticity.</div>
+                </div>
+              </div>
+              <div class="g4">
+                <div class="mbox"><i data-lucide="target"></i>
+                  <div class="mlbl">ACCURACY</div>
+                  <div class="mval">95.33%</div>
+                </div>
+                <div class="mbox"><i data-lucide="crosshair"></i>
+                  <div class="mlbl">PRECISION</div>
+                  <div class="mval">91.46%</div>
+                </div>
+                <div class="mbox"><i data-lucide="refresh-cw"></i>
+                  <div class="mlbl">RECALL</div>
+                  <div class="mval">100%</div>
+                </div>
+                <div class="mbox"><i data-lucide="star"></i>
+                  <div class="mlbl">F1-SCORE</div>
+                  <div class="mval">95.54%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Arch + Right -->
+          <div class="g2r">
+            <div class="panel">
+              <div class="ptitle">MODEL ARCHITECTURE</div>
+              <div class="arch-flow">
+                <div class="anode">
+                  <div class="abox"><i data-lucide="mic" style="width:20px;height:20px"></i></div>
+                  <span>Input</span><small>Audio</small>
+                </div>
+                <i class="aarr" data-lucide="arrow-right" style="width:14px"></i>
+                <div class="anode on">
+                  <div class="abox"><i data-lucide="filter" style="width:20px;height:20px"></i></div>
+                  <span>Preprocess</span><small>VAD/Noise</small>
+                </div>
+                <i class="aarr" data-lucide="arrow-right" style="width:14px"></i>
+                <div class="anode on">
+                  <div class="abox"><i data-lucide="bar-chart" style="width:20px;height:20px"></i></div>
+                  <span>MFCC</span><small>40 Coeff</small>
+                </div>
+                <i class="aarr" data-lucide="arrow-right" style="width:14px"></i>
+                <div class="anode on">
+                  <div class="abox"><i data-lucide="layers" style="width:20px;height:20px"></i></div>
+                  <span>CNN</span><small>Conv2D</small>
+                </div>
+                <i class="aarr" data-lucide="arrow-right" style="width:14px"></i>
+                <div class="anode on">
+                  <div class="abox"><i data-lucide="git-branch" style="width:20px;height:20px"></i></div>
+                  <span>Bi-LSTM</span><small>Sequence</small>
+                </div>
+                <i class="aarr" data-lucide="arrow-right" style="width:14px"></i>
+                <div class="anode">
+                  <div class="abox" id="archOut"><i data-lucide="check-circle" style="width:20px;height:20px"></i></div>
+                  <span>Output</span><small>Real/Fake</small>
+                </div>
+              </div>
+              <div class="arch-lbl">Hybrid Deep Learning Model (CNN + Bi-LSTM)</div>
+            </div>
+
+            <div class="rstack">
+              <div class="panel">
+                <div class="ptitle">MULTILINGUAL SUPPORT</div>
+                <div class="lang-row">
+                  <div class="lchip">
+                    <div class="licon">हि</div>
+                    <div class="ltxt">
+                      <h5>HINDI</h5>
+                      <p>Supported</p>
+                    </div>
+                  </div>
+                  <div class="lchip">
+                    <div class="licon">म</div>
+                    <div class="ltxt">
+                      <h5>MARATHI</h5>
+                      <p>Supported</p>
+                    </div>
+                  </div>
+                  <div class="lchip">
+                    <div class="licon" style="font-size:.72rem">EN</div>
+                    <div class="ltxt">
+                      <h5>ENGLISH</h5>
+                      <p>Supported</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="ptitle">SYSTEM PERFORMANCE</div>
+                <div class="perf-row">
+                  <div class="perf-chart">
+                    <svg viewBox="0 0 200 55" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#10b981" stop-opacity=".4" />
+                          <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M0,48 L22,36 L44,50 L66,20 L88,40 L110,28 L132,46 L154,16 L176,36 L200,10 L200,55 L0,55Z"
+                        fill="url(#pg)" />
+                      <path d="M0,48 L22,36 L44,50 L66,20 L88,40 L110,28 L132,46 L154,16 L176,36 L200,10" fill="none"
+                        stroke="#10b981" stroke-width="1.5" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                  <div class="perf-right">
+                    <h6>Overall Accuracy</h6>
+                    <div class="big">95.33%</div>
+                    <div class="stat">Model Status</div>
+                    <div
+                      style="display:flex;align-items:center;gap:.35rem;justify-content:flex-end;color:var(--green);font-size:.68rem;margin-top:.25rem">
+                      <span class="sdot"></span> Active
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="foot">
+            <span><i data-lucide="shield"></i> VoiceTrust AI &nbsp;|&nbsp; Deepfake Audio Detection System</span>
+            <span><i data-lucide="lock"></i> Secure • Reliable • Accurate</span>
+          </div>
+        </div><!-- /view-dashboard -->
+
+
+        <!-- ====== VIEW: AUDIO ANALYSIS ====== -->
+        <div class="view" id="view-audio">
+          <div class="g2" style="flex:1">
+            <div class="panel">
+              <div class="ptitle">AUDIO ANALYSIS</div>
+              <div class="dropzone" id="dz2" ondragover="doDragOver(event)" ondragleave="doDragLeave2()"
+                ondrop="doDrop(event)">
+                <i data-lucide="upload-cloud"></i>
+                <p>Drag &amp; Drop Your Audio File Here<br><br>or</p>
+                <label for="fileIn" class="btn-browse">Browse File</label>
+                <p class="hint">Supports: .wav, .mp3 &nbsp;|&nbsp; Max Size: 50MB</p>
+              </div>
+              <div class="player-wrap" id="pw2">
+                <div class="fname" id="fn2">audio.wav</div>
+                <div class="player-row">
+                  <button class="play-btn" onclick="doPlay()"><i data-lucide="play" id="playIco2"
+                      style="width:14px;height:14px"></i></button>
+                  <div class="wave-wrap"><canvas id="waveCanvas2"></canvas></div>
+                  <span class="ptime" id="ptime2">00:00 / 00:00</span>
+                  <i data-lucide="volume-2" style="width:15px;height:15px;color:var(--muted)"></i>
+                </div>
+              </div>
+              <button class="btn-analyze" id="btnAnalyze2" onclick="analyse()" disabled>
+                <i data-lucide="search"></i> ANALYZE AUDIO
+              </button>
+            </div>
+
+            <div class="panel">
+              <div class="ptitle">DETECTION RESULT</div>
+              <div class="result-row">
+                <div class="gauge-wrap">
+                  <svg class="gauge-svg" viewBox="0 0 100 100">
+                    <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                    <circle class="gauge-prog" id="gRing2" cx="50" cy="50" r="40"></circle>
+                  </svg>
+                  <div class="gauge-inner" id="gInner2"><i id="gIcon2" data-lucide="mic"
+                      style="width:34px;height:34px"></i></div>
+                </div>
+                <div class="vdetails">
+                  <div class="vtitle" id="vTitle2">AWAITING...</div>
+                  <div class="vclabel">Confidence Score</div>
+                  <div class="vscore" id="vScore2">--%</div>
+                  <div class="vdesc" id="vDesc2">Upload an audio clip to verify authenticity.</div>
+                </div>
+              </div>
+              <div class="g4">
+                <div class="mbox"><i data-lucide="target"></i>
+                  <div class="mlbl">ACCURACY</div>
+                  <div class="mval">95.33%</div>
+                </div>
+                <div class="mbox"><i data-lucide="crosshair"></i>
+                  <div class="mlbl">PRECISION</div>
+                  <div class="mval">91.46%</div>
+                </div>
+                <div class="mbox"><i data-lucide="refresh-cw"></i>
+                  <div class="mlbl">RECALL</div>
+                  <div class="mval">100%</div>
+                </div>
+                <div class="mbox"><i data-lucide="star"></i>
+                  <div class="mlbl">F1-SCORE</div>
+                  <div class="mval">95.54%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /view-audio -->
+
+
+        <!-- ====== VIEW: ARCHITECTURE ====== -->
+        <div class="view" id="view-arch">
+          <div class="panel" style="flex:1">
+            <div class="ptitle">MODEL ARCHITECTURE</div>
+            <p style="color:var(--muted);font-size:.83rem;margin-bottom:1rem">The IndicFakeSpeech pipeline processes raw
+              audio through a 5-stage hybrid CNN + Bi-LSTM network to classify speech as Real or Synthetic.</p>
+            <div class="arch-flow" style="gap:1rem">
+              <div class="anode">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="mic"
+                    style="width:22px;height:22px"></i></div><span>Input</span><small>Raw Audio</small>
+              </div>
+              <i class="aarr" data-lucide="arrow-right"></i>
+              <div class="anode on">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="filter"
+                    style="width:22px;height:22px"></i></div><span>Preprocessing</span><small>VAD + Noise</small>
+              </div>
+              <i class="aarr" data-lucide="arrow-right"></i>
+              <div class="anode on">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="bar-chart"
+                    style="width:22px;height:22px"></i></div><span>MFCC</span><small>40 Coefficients</small>
+              </div>
+              <i class="aarr" data-lucide="arrow-right"></i>
+              <div class="anode on">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="layers"
+                    style="width:22px;height:22px"></i></div><span>CNN</span><small>3× Conv2D</small>
+              </div>
+              <i class="aarr" data-lucide="arrow-right"></i>
+              <div class="anode on">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="git-branch"
+                    style="width:22px;height:22px"></i></div><span>Bi-LSTM</span><small>Seq. Learning</small>
+              </div>
+              <i class="aarr" data-lucide="arrow-right"></i>
+              <div class="anode">
+                <div class="abox" style="width:58px;height:58px"><i data-lucide="check-circle"
+                    style="width:22px;height:22px"></i></div><span>Output</span><small>Real / Fake</small>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:2rem">
+              <div class="panel" style="text-align:center">
+                <div style="color:var(--cyan);font-size:1.6rem;font-weight:700;margin-bottom:.4rem">40</div>
+                <div style="color:var(--muted);font-size:.78rem">MFCC Coefficients</div>
+              </div>
+              <div class="panel" style="text-align:center">
+                <div style="color:var(--cyan);font-size:1.6rem;font-weight:700;margin-bottom:.4rem">3×</div>
+                <div style="color:var(--muted);font-size:.78rem">CNN Conv2D Blocks</div>
+              </div>
+              <div class="panel" style="text-align:center">
+                <div style="color:var(--cyan);font-size:1.6rem;font-weight:700;margin-bottom:.4rem">16kHz</div>
+                <div style="color:var(--muted);font-size:.78rem">Sample Rate</div>
+              </div>
+            </div>
+            <div class="arch-lbl" style="margin-top:1.5rem">Hybrid Deep Learning Model (CNN + Bi-LSTM) — IndicFakeSpeech
+              Architecture</div>
+          </div>
+        </div><!-- /view-arch -->
+
+
+        <!-- ====== VIEW: PERFORMANCE ====== -->
+        <div class="view" id="view-perf">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;flex:1">
+            <div class="panel">
+              <div class="ptitle">ACCURACY METRICS</div>
+              <div style="margin-top:.9rem">
+                <div class="stat-bar-row"><span style="color:var(--muted)">Overall Accuracy</span><span
+                    style="color:var(--green);font-weight:700">95.33%</span></div>
+                <div class="bar-bg">
+                  <div class="bar-fill" style="width:95.33%;background:var(--green)"></div>
+                </div>
+                <div class="stat-bar-row"><span style="color:var(--muted)">Precision</span><span
+                    style="color:var(--cyan);font-weight:700">91.46%</span></div>
+                <div class="bar-bg">
+                  <div class="bar-fill" style="width:91.46%;background:var(--cyan)"></div>
+                </div>
+                <div class="stat-bar-row"><span style="color:var(--muted)">Recall</span><span
+                    style="color:var(--cyan);font-weight:700">100%</span></div>
+                <div class="bar-bg">
+                  <div class="bar-fill" style="width:100%;background:var(--cyan)"></div>
+                </div>
+                <div class="stat-bar-row"><span style="color:var(--muted)">F1-Score</span><span
+                    style="color:var(--green);font-weight:700">95.54%</span></div>
+                <div class="bar-bg">
+                  <div class="bar-fill" style="width:95.54%;background:var(--green)"></div>
+                </div>
+                <div class="stat-bar-row"><span style="color:var(--muted)">Marathi Zero-Shot</span><span
+                    style="color:var(--orange);font-weight:700">92.67%</span></div>
+                <div class="bar-bg" style="margin-bottom:0">
+                  <div class="bar-fill" style="width:92.67%;background:var(--orange)"></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="ptitle">DATASET OVERVIEW</div>
+              <div style="margin-top:.9rem">
+                <div class="data-row"><span class="k">Total Clips</span><span class="v"
+                    style="color:var(--green)">2,300</span></div>
+                <div class="data-row"><span class="k">Real Clips</span><span class="v"
+                    style="color:var(--green)">1,150</span></div>
+                <div class="data-row"><span class="k">Fake Clips (gTTS + EdgeTTS)</span><span class="v"
+                    style="color:var(--red)">1,150</span></div>
+                <div class="data-row"><span class="k">Languages</span><span class="v" style="color:var(--cyan)">English,
+                    Hindi, Marathi</span></div>
+                <div class="data-row"><span class="k">Model Size</span><span class="v" style="color:var(--cyan)">~15
+                    MB</span></div>
+                <div class="data-row" style="margin-bottom:0"><span class="k">Training Accuracy</span><span class="v"
+                    style="color:var(--green)">95.33%</span></div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /view-perf -->
+
+        <!-- ====== VIEW: HISTORY ====== -->
+        <div class="view" id="view-history">
+          <div class="panel" style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;">
+              <div class="ptitle" style="margin-bottom:0">ANALYSIS HISTORY</div>
+              <button onclick="clearHistory()"
+                style="background:transparent;border:1px solid rgba(239,68,68,.4);color:#ef4444;padding:.4rem .9rem;border-radius:4px;font-size:.75rem;font-weight:600;cursor:pointer;transition:background .2s"
+                onmouseover="this.style.background='rgba(239,68,68,.1)'"
+                onmouseout="this.style.background='transparent'">Clear All</button>
+            </div>
+            <p style="color:var(--muted);font-size:.83rem;margin-bottom:1.2rem">Previously analyzed audio files and
+              their detection results.</p>
+            <div id="historyList">
+              <div data-placeholder style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+                <i data-lucide="inbox" style="width:48px;height:48px;margin-bottom:1rem;opacity:.3"></i>
+                <p style="font-size:.88rem">No analysis history yet.</p>
+                <p style="font-size:.75rem;margin-top:.4rem">Analyze an audio file to see results here.</p>
+              </div>
+            </div>
+          </div>
+        </div><!-- /view-history -->
+
+        <!-- ====== VIEW: SETTINGS ====== -->
+        <div class="view" id="view-settings">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;flex:1">
+            <div class="panel">
+              <div class="ptitle">DETECTION SETTINGS</div>
+              <div style="display:flex;flex-direction:column;gap:1.4rem;margin-top:.9rem">
+                <div>
+                  <label style="font-size:.82rem;color:var(--muted);display:block;margin-bottom:.5rem">Detection
+                    Threshold</label>
+                  <input type="range" id="threshSlider" min="0" max="100" value="50"
+                    oninput="document.getElementById('threshVal').textContent=this.value+'%'"
+                    style="width:100%;accent-color:var(--cyan)">
+                  <div style="display:flex;justify-content:space-between;margin-top:.3rem">
+                    <span style="font-size:.7rem;color:var(--muted)">More Real</span>
+                    <span id="threshVal" style="font-size:.82rem;color:var(--cyan);font-weight:600">50%</span>
+                    <span style="font-size:.7rem;color:var(--muted)">More Fake</span>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:.82rem;color:var(--muted);display:block;margin-bottom:.5rem">Default
+                    Language</label>
+                  <select id="langSel"
+                    style="width:100%;background:var(--bg-dark);color:var(--txt);border:1px solid var(--border-l);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.85rem">
+                    <option value="auto">Auto Detect</option>
+                    <option value="hi">Hindi</option>
+                    <option value="mr">Marathi</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(0,0,0,.2);border-radius:var(--r-sm)">
+                  <div>
+                    <div style="font-size:.85rem;font-weight:500">Voice Activity Detection (VAD)</div>
+                    <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">Filters music, SFX, and silence
+                    </div>
+                  </div>
+                  <label style="position:relative;display:inline-block;width:46px;height:24px">
+                    <input type="checkbox" id="vadToggle" checked style="opacity:0;width:0;height:0">
+                    <span
+                      onclick="this.previousElementSibling.checked=!this.previousElementSibling.checked;this.style.background=this.previousElementSibling.checked?'var(--cyan)':'#334155'"
+                      style="position:absolute;cursor:pointer;inset:0;background:var(--cyan);border-radius:24px;transition:.3s"></span>
+                  </label>
+                </div>
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(0,0,0,.2);border-radius:var(--r-sm)">
+                  <div>
+                    <div style="font-size:.85rem;font-weight:500">Save History</div>
+                    <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">Store analysis results locally
+                    </div>
+                  </div>
+                  <label style="position:relative;display:inline-block;width:46px;height:24px">
+                    <input type="checkbox" id="histToggle" checked style="opacity:0;width:0;height:0">
+                    <span
+                      onclick="this.previousElementSibling.checked=!this.previousElementSibling.checked;this.style.background=this.previousElementSibling.checked?'var(--cyan)':'#334155'"
+                      style="position:absolute;cursor:pointer;inset:0;background:var(--cyan);border-radius:24px;transition:.3s"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="ptitle">SYSTEM INFO</div>
+              <div style="display:flex;flex-direction:column;gap:.7rem;margin-top:.9rem">
+                <div class="data-row"><span class="k">Model</span><span class="v"
+                    style="color:var(--cyan)">IndicFakeSpeech CNN</span></div>
+                <div class="data-row"><span class="k">Framework</span><span class="v"
+                    style="color:var(--cyan)">PyTorch</span></div>
+                <div class="data-row"><span class="k">Feature Extractor</span><span class="v"
+                    style="color:var(--cyan)">librosa MFCC</span></div>
+                <div class="data-row"><span class="k">Sample Rate</span><span class="v" style="color:var(--cyan)">16,000
+                    Hz</span></div>
+                <div class="data-row"><span class="k">Max Audio Length</span><span class="v"
+                    style="color:var(--cyan)">30 seconds</span></div>
+                <div class="data-row"><span class="k">Server</span><span class="v" style="color:var(--green)">Flask
+                    (localhost:5000)</span></div>
+                <div class="data-row" style="margin-bottom:0"><span class="k">Model Status</span><span class="v"
+                    style="color:var(--green)"><span class="sdot" style="margin-right:.4rem"></span>Active</span></div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /view-settings -->
+
+        <!-- ====== VIEW: ABOUT US ====== -->
+        <div class="view" id="view-about">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;flex:1">
+            <div class="panel">
+              <div class="ptitle">ABOUT THE PROJECT</div>
+              <div style="margin-top:.9rem">
+                <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:.5rem">VoiceTrust <span
+                    style="color:var(--green)">AI</span></h2>
+                <p style="color:var(--muted);font-size:.83rem;line-height:1.6;margin-bottom:1rem">An advanced,
+                  research-grade multilingual deepfake audio detection system trained on the <strong
+                    style="color:var(--cyan)">IndicFakeSpeech</strong> dataset comprising 2,300 clips across English,
+                  Hindi, and Marathi languages.</p>
+                <p style="color:var(--muted);font-size:.83rem;line-height:1.6;margin-bottom:1.5rem">The system uses a
+                  hybrid <strong style="color:var(--cyan)">CNN + Bi-LSTM</strong> architecture with MFCC feature
+                  extraction and a language-agnostic Voice Activity Detection (VAD) module to detect synthesised audio
+                  generated by TTS engines like gTTS and Microsoft Edge TTS.</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem">
+                  <div
+                    style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.15);border-radius:var(--r-sm);padding:.9rem;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--cyan);font-family:'Space Grotesk'">95.33%
+                    </div>
+                    <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">Training Accuracy</div>
+                  </div>
+                  <div
+                    style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);border-radius:var(--r-sm);padding:.9rem;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--green);font-family:'Space Grotesk'">2,300
+                    </div>
+                    <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">Audio Clips Trained</div>
+                  </div>
+                  <div
+                    style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);border-radius:var(--r-sm);padding:.9rem;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--green);font-family:'Space Grotesk'">3</div>
+                    <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">Languages Supported</div>
+                  </div>
+                  <div
+                    style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.15);border-radius:var(--r-sm);padding:.9rem;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--cyan);font-family:'Space Grotesk'">92.67%
+                    </div>
+                    <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">Zero-Shot Marathi</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="ptitle">DEVELOPMENT TEAM</div>
+              <div style="display:flex;flex-direction:column;gap:1rem;margin-top:.9rem">
+                <div
+                  style="display:flex;align-items:center;gap:1rem;padding:1rem;background:rgba(0,0,0,.2);border-radius:var(--r-sm);border:1px solid var(--border-l)">
+                  <div
+                    style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#3b82f6);display:flex;justify-content:center;align-items:center;font-weight:700;font-size:1.1rem;flex-shrink:0">
+                    M</div>
+                  <div>
+                    <div style="font-weight:600;font-size:.95rem"> Mahendra Chavan</div>
+                    <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem">Lead Developer &amp; ML Engineer
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="display:flex;align-items:center;gap:1rem;padding:1rem;background:rgba(0,0,0,.2);border-radius:var(--r-sm);border:1px solid var(--border-l)">
+                  <div
+                    style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--green),#06b6d4);display:flex;justify-content:center;align-items:center;font-weight:700;font-size:1.1rem;flex-shrink:0">
+                    S</div>
+                  <div>
+                    <div style="font-weight:600;font-size:.95rem">Sopan Shinde</div>
+                    <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem">Backend Developer &amp; Data
+                      Engineer</div>
+                  </div>
+                </div>
+                <div
+                  style="display:flex;align-items:center;gap:1rem;padding:1rem;background:rgba(0,0,0,.2);border-radius:var(--r-sm);border:1px solid var(--border-l)">
+                  <div
+                    style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,var(--cyan));display:flex;justify-content:center;align-items:center;font-weight:700;font-size:1.1rem;flex-shrink:0">
+                    A</div>
+                  <div>
+                    <div style="font-weight:600;font-size:.95rem">Abhishek Kadam</div>
+                    <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem">Frontend Developer &amp; UI/UX
+                      Designer</div>
+                  </div>
+                </div>
+                <div
+                  style="margin-top:.5rem;padding:.9rem;background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.1);border-radius:var(--r-sm);text-align:center">
+                  <div style="font-size:.75rem;color:var(--muted)">Major Project — Third Year B.E.</div>
+                  <div style="font-size:.78rem;color:var(--cyan);margin-top:.3rem">Computer Engineering • 2025–26</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /view-about -->
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Safe lucide helper — works even if CDN fails to load
+    function ic() { try { if (window.lucide) lucide.createIcons(); } catch (e) { } }
+
+    // ── Navigation ──
+    const VIEWS = ['dashboard', 'audio', 'arch', 'perf', 'history', 'settings', 'about'];
+    function goTo(el) {
+      const view = el.getAttribute('data-view');
+      document.querySelectorAll('#navList li').forEach(li => li.classList.remove('active'));
+      el.classList.add('active');
+      VIEWS.forEach(v => {
+        const e = document.getElementById('view-' + v);
+        if (e) e.classList.remove('active');
+      });
+      const target = document.getElementById('view-' + view);
+      if (target) target.classList.add('active');
+      ic();
+    }
+
+    // ── File handling ──
+    let curFile = null;
+    const audioEl = document.getElementById('audioEl');
+    let playing = false;
+
+    function doDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+    function doDragLeave() { document.getElementById('dz').classList.remove('over'); }
+    function doDragLeave2() { if (document.getElementById('dz2')) document.getElementById('dz2').classList.remove('over'); }
+    function doDrop(e) {
+      e.preventDefault();
+      ['dz', 'dz2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('over'); });
+      if (e.dataTransfer.files[0]) pickFile(e.dataTransfer.files[0]);
+    }
+
+    function pickFile(file) {
+      if (!file) return;
+      curFile = file;
+      const url = URL.createObjectURL(file);
+      audioEl.src = url;
+      audioEl.load();
+
+      // Update both player wrappers
+      ['fn', 'fn2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = file.name; });
+      ['pw', 'pw2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('on'); });
+      ['btnAnalyze', 'btnAnalyze2'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = false; });
+
+      audioEl.onloadedmetadata = () => {
+        updateTime();
+        drawWave('waveCanvas');
+        drawWave('waveCanvas2');
+      };
+      // Reset gauges
+      setGauge('gRing', 'gInner', 'gIcon', 'vTitle', 'vScore', 'vDesc', 0, 'await');
+      setGauge('gRing2', 'gInner2', 'gIcon2', 'vTitle2', 'vScore2', 'vDesc2', 0, 'await');
+      ic();
+    }
+
+    function drawWave(canvasId) {
+      const c = document.getElementById(canvasId);
+      if (!c) return;
+      const wrap = c.parentElement;
+      c.width = wrap.clientWidth; c.height = wrap.clientHeight;
+      const ctx = c.getContext('2d'), W = c.width, H = c.height, bars = 80, bw = W / bars - 1;
+      ctx.clearRect(0, 0, W, H);
+      for (let i = 0; i < bars; i++) {
+        const h = (Math.random() * .65 + .1) * H, x = i * (bw + 1), y = (H - h) / 2;
+        const g = ctx.createLinearGradient(0, y, 0, y + h);
+        g.addColorStop(0, 'rgba(6,182,212,.9)'); g.addColorStop(1, 'rgba(6,182,212,.15)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(x, y, bw, h, 1); ctx.fill();
+      }
+    }
+
+    function doPlay() {
+      if (!audioEl.src) return;
+      if (playing) { audioEl.pause(); playing = false; setPlayIco('play'); }
+      else { audioEl.play(); playing = true; setPlayIco('pause'); updateProgress(); }
+    }
+    function setPlayIco(name) {
+      ['playIco', 'playIco2'].forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('data-lucide', name); });
+      ic();
+    }
+    function updateProgress() { updateTime(); if (!audioEl.paused) requestAnimationFrame(updateProgress); }
+    function updateTime() {
+      const s = fmt(audioEl.currentTime || 0), d = fmt(audioEl.duration || 0), t = `${s} / ${d}`;
+      ['ptime', 'ptime2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t; });
+    }
+    function fmt(s) { const m = Math.floor(s / 60), sec = Math.floor(s % 60); return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`; }
+    audioEl.addEventListener('ended', () => { playing = false; setPlayIco('play'); });
+
+    // ── Gauge ──
+    const C = 251.2;
+    const COLORS = { await: '#06b6d4', real: '#10b981', fake: '#ef4444', warn: '#f59e0b', err: '#ef4444' };
+    const ICONS = { await: 'mic', real: 'check-circle', fake: 'x-octagon', warn: 'alert-triangle', err: 'alert-circle' };
+
+    function setGauge(ringId, innerId, iconId, titleId, scoreId, descId, pct, state) {
+      const col = COLORS[state] || COLORS.await;
+      const ico = ICONS[state] || 'mic';
+      const ring = document.getElementById(ringId);
+      const inner = document.getElementById(innerId);
+      const icon = document.getElementById(iconId);
+      if (!ring) return;
+      ring.style.strokeDashoffset = C - (pct / 100) * C;
+      ring.style.stroke = col;
+      ring.style.filter = `drop-shadow(0 0 5px ${col})`;
+      if (inner) {
+        inner.style.background = `radial-gradient(circle, ${col}18 0%, rgba(13,18,28,.95) 70%)`;
+        inner.style.borderColor = `${col}55`;
+        inner.style.boxShadow = `inset 0 0 18px ${col}20, 0 0 16px ${col}20`;
+      }
+      if (icon) { icon.style.color = col; icon.setAttribute('data-lucide', ico); }
+      const title = document.getElementById(titleId);
+      const score = document.getElementById(scoreId);
+      if (title) title.style.color = col;
+      if (score) score.style.color = col;
+      ic();
+    }
+
+    // ── Analyse ──
+    async function analyse() {
+      if (!curFile) return;
+      ['btnAnalyze', 'btnAnalyze2'].forEach(id => { const b = document.getElementById(id); if (b) { b.disabled = true; b.innerHTML = '<div class="spin"></div> ANALYSING...'; } });
+      setGauge('gRing', 'gInner', 'gIcon', 'vTitle', 'vScore', 'vDesc', 10, 'await');
+      setGauge('gRing2', 'gInner2', 'gIcon2', 'vTitle2', 'vScore2', 'vDesc2', 10, 'await');
+      document.getElementById('vTitle').textContent = 'ANALYSING';
+      document.getElementById('vScore').textContent = '...';
+
+      const fd = new FormData(); fd.append('audio', curFile);
+      try {
+        const res = await fetch('/predict', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        if (data.warning || data.label === 'Non-Speech') {
+          showResult('WARNING', 'Non-speech audio detected.', 0, 'warn');
+        } else {
+          const isReal = data.label === 'Real';
+          const st = isReal ? 'real' : 'fake';
+          const msg = isReal ? 'This audio is predicted to be from a <span class="hi" style="color:var(--green)">real human voice</span>.'
+            : 'This audio is detected as <span class="hi" style="color:var(--red)">AI-synthesised</span>.';
+          showResult((isReal ? 'REAL' : 'FAKE') + ' VOICE', msg, data.confidence, st);
+        }
+      } catch (e) {
+        showResult('ERROR', e.message || 'Server error.', 0, 'err');
+      } finally {
+        ['btnAnalyze', 'btnAnalyze2'].forEach(id => { const b = document.getElementById(id); if (b) { b.disabled = false; b.innerHTML = '<i data-lucide="search"></i> ANALYZE AUDIO'; } });
+        ic();
+      }
+    }
+
+    function showResult(title, desc, pct, state) {
+      setGauge('gRing', 'gInner', 'gIcon', 'vTitle', 'vScore', 'vDesc', pct, state);
+      setGauge('gRing2', 'gInner2', 'gIcon2', 'vTitle2', 'vScore2', 'vDesc2', pct, state);
+      ['vTitle', 'vTitle2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = title; });
+      ['vScore', 'vScore2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = pct > 0 ? pct.toFixed(2) + '%' : 'N/A'; });
+      ['vDesc', 'vDesc2'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = desc; });
+      const ao = document.getElementById('archOut');
+      const col = COLORS[state] || COLORS.await;
+      if (ao) { ao.style.color = col; ao.style.borderColor = col; ao.style.boxShadow = `0 0 10px ${col}`; }
+
+      // ── Save to History ──
+      addToHistory(title, pct, state, col);
+    }
+
+    function addToHistory(title, pct, state, col) {
+      const list = document.getElementById('historyList');
+      if (!list || !curFile) return;
+
+      // Remove empty-state placeholder if present
+      const placeholder = list.querySelector('[data-placeholder]');
+      if (placeholder) placeholder.remove();
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const fname = curFile ? curFile.name : 'Unknown';
+      const scoreStr = pct > 0 ? pct.toFixed(2) + '%' : 'N/A';
+
+      const entry = document.createElement('div');
+      entry.style.cssText = `display:flex;align-items:center;gap:1rem;padding:.9rem 1rem;
+        background:rgba(0,0,0,.2);border:1px solid ${col}33;border-radius:var(--r-sm);
+        margin-bottom:.7rem;transition:border-color .2s;`;
+      entry.innerHTML = `
+        <div style="width:42px;height:42px;border-radius:50%;border:2px solid ${col};
+          display:flex;justify-content:center;align-items:center;flex-shrink:0;
+          background:${col}15;color:${col};font-size:.7rem;font-weight:700;">
+          ${state === 'real' ? 'REAL' : state === 'fake' ? 'FAKE' : 'N/A'}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fname}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem;">${dateStr} &nbsp;•&nbsp; ${timeStr}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:1rem;font-weight:700;color:${col};">${scoreStr}</div>
+          <div style="font-size:.68rem;color:var(--muted);">Confidence</div>
+        </div>`;
+      list.insertBefore(entry, list.firstChild);
+    }
+
+    function clearHistory() {
+      const list = document.getElementById('historyList');
+      if (list) list.innerHTML = `
+        <div data-placeholder style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+          <i data-lucide="inbox" style="width:48px;height:48px;margin-bottom:1rem;opacity:.3"></i>
+          <p style="font-size:.88rem">No analysis history yet.</p>
+          <p style="font-size:.75rem;margin-top:.4rem">Analyze an audio file to see results here.</p>
+        </div>`;
+      ic();
+    }
+
+    // Init gauges
+    document.getElementById('gRing').style.strokeDasharray = C;
+    document.getElementById('gRing2').style.strokeDasharray = C;
+    setGauge('gRing', 'gInner', 'gIcon', 'vTitle', 'vScore', 'vDesc', 0, 'await');
+    setGauge('gRing2', 'gInner2', 'gIcon2', 'vTitle2', 'vScore2', 'vDesc2', 0, 'await');
+
+    // ── Init icons LAST, after all code is set up ──
+    ic();
+  </script>
+</body>
+
+</html>
