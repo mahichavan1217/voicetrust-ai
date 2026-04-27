@@ -14,7 +14,11 @@ import os, sys, uuid, logging, io, base64
 from pathlib import Path
 
 import numpy as np
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -45,9 +49,9 @@ CORS(app)
 model = scaler = None
 
 
-class FullCNN(torch.nn.Module if True else object):
-    """4-block CNN trained on full 2300-sample dataset (133 feature rows)."""
-    pass  # defined properly inside load_model_once to avoid circular imports
+class FullCNN(object):
+    """4-block CNN dummy when torch is not loaded."""
+    pass
 
 
 class SklearnAudioModel:
@@ -60,7 +64,7 @@ class SklearnAudioModel:
     def predict_proba_single(self, features):
         from utils.feature_extraction import flatten_feature_map
 
-        vector = flatten_feature_map(features)
+        vector = flatten_feature_map(features).reshape(1, -1)
         if hasattr(self.pipeline, "predict_proba"):
             prob = float(self.pipeline.predict_proba(vector)[0, 1])
         else:
@@ -131,8 +135,8 @@ def load_model_once():
         return False
     try:
         import joblib
-        import torch
-        torch.set_num_threads(1)
+        if torch is not None:
+            torch.set_num_threads(1)
 
         payload = joblib.load(str(MODEL_PATH))
 
