@@ -79,7 +79,7 @@ def preprocess_audio(filepath: str,
         return waveform
     except Exception as exc:
         print(f"[WARN] Could not process {filepath}: {exc}")
-        return None
+        raise RuntimeError(f"Decode error details: type={type(exc).__name__}, msg={exc}")
 
 
 def save_wav(waveform: np.ndarray,
