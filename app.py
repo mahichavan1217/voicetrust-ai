@@ -52,6 +52,11 @@ def load_model_once():
         return False
     try:
         from utils.model import load_model_joblib
+        import torch
+        
+        # Limit PyTorch threads so it doesn't crash Free Tier servers out of memory
+        torch.set_num_threads(1)
+        
         model, scaler = load_model_joblib(str(MODEL_PATH))
         model.eval()
         logger.info("PyTorch CNN model loaded successfully.")

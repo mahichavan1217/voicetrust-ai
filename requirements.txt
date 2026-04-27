@@ -1,18 +1,12 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.3.1
-torchaudio==2.3.1
-torchvision==0.18.1
+torch
+torchaudio
 numpy
 librosa==0.10.2
 soundfile
 flask==3.0.3
 flask-cors
-gtts
-datasets
 matplotlib
-seaborn
-edge-tts
-scikit-learn
-tqdm
 requests
+tqdm
 gunicorn
